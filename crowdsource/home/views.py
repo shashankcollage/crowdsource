@@ -4,6 +4,9 @@ from django.contrib import messages
 from .models import Issue, ActivityLog
 from .forms import IssueForm
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import UserProfile
 
 def dash(request):
     return HttpResponse("homeeeeeeeeeeeeeeee!")
@@ -61,4 +64,46 @@ def dashboard_view(request):
         'search_query': search_query, # Pass this back to template to keep input filled
     }
 
+    return render(request, 'home/index.html', context)
+
+def create_missing_profiles():
+    """Run this once to create profiles for existing users"""
+    for user in User.objects.all():
+        if not hasattr(user, 'userprofile'):
+            UserProfile.objects.create(user=user)
+            
+@login_required
+def user_management(request):
+    # Handle POST (Add User)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        role = request.POST.get('role')
+        phone = request.POST.get('phone')
+        
+        # Create user
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                password='temp123'  # Set temp password
+            )
+            # Create profile
+            UserProfile.objects.create(
+                user=user,
+                role=role,
+                phone=phone
+            )
+            messages.success(request, f'User {username} created successfully!')
+            return redirect('user_management')
+        except Exception as e:
+            messages.error(request, f'Error creating user: {str(e)}')
+    
+    # Handle GET - Display users
+    users = User.objects.select_related('userprofile').all()
+    context = {'users': users}
     return render(request, 'home/index.html', context)

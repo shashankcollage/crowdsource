@@ -43,3 +43,16 @@ class ActivityLog(models.Model):
 
     def __str__(self):
         return self.action
+    
+    
+
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('citizen', 'Citizen'),
+        ('officer', 'Officer'),
+        ('admin', 'Admin'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='citizen')
+    phone = models.CharField(max_length=15, blank=True)
+    is_active = models.BooleanField(default=True)
