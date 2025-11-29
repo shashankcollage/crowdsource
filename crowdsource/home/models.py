@@ -56,3 +56,5 @@ class UserProfile(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='citizen')
     phone = models.CharField(max_length=15, blank=True)
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.role
