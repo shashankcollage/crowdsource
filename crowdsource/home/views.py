@@ -7,6 +7,12 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import UserProfile
+from django.views.generic import ListView
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
 
 def dash(request):
     return HttpResponse("homeeeeeeeeeeeeeeee!")
@@ -107,3 +113,23 @@ def user_management(request):
     users = User.objects.select_related('userprofile').all()
     context = {'users': users}
     return render(request, 'home/index.html', context)
+
+# home/views.py
+
+
+class UserManagementView(ListView):
+    model = User
+    template_name = 'home/user_management.html'
+    context_object_name = 'users'
+
+@require_http_methods(["GET", "POST"])
+def add_user_ajax(request):
+    """AJAX endpoint for add user modal"""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': 'User created successfully'})
+    else:
+        form = UserCreationForm()
+    return JsonResponse({'success': False, 'form': form.as_p()})

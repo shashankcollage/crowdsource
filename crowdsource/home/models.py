@@ -1,5 +1,10 @@
 from django.db import models
+from django.views.generic import ListView
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
 
 class Issue(models.Model):
     CATEGORY_CHOICES = [
@@ -58,3 +63,26 @@ class UserProfile(models.Model):
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.role
+    # views.py - Class-based view for user list with modal support
+
+
+class UserManagementView(ListView):
+    model = User
+    template_name = 'user_management.html'
+    context_object_name = 'users'
+    
+    @method_decorator(require_http_methods(["GET", "POST"]))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+@require_http_methods(["GET", "POST"])
+def add_user_ajax(request):
+    """AJAX endpoint for add user modal"""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': 'User created successfully'})
+    else:
+        form = UserCreationForm()
+    return JsonResponse({'success': False, 'form': form.as_p()})
