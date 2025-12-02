@@ -772,12 +772,6 @@
                             </button>
                             <input type="text" placeholder="Search issues..." id="searchInput">
                         </div>
-                        <button class="btn btn-primary" onclick="openNewIssueModal()">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            New Issue
-                        </button>
                     </div>
                 </div>
                 
@@ -850,7 +844,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Issue</th>
+                                            <th>location</th>
                                             <th>Category</th>
                                             <th>Status</th>
                                             <th>Priority</th>
@@ -862,10 +856,10 @@
                                         {% for issue in recent_issues %}
                                         <tr>
                                             <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.title }}</td>
+                                            <td><p>{{ issue.location|truncatechars:10}}</p> </td>
                                             <td>
                                                 <span class="category-badge category-{{ issue.category }}">
-                                                    {{ issue.get_category_display }}
+                                                    {{ issue.get_category_display}}
                                                 </span>
                                             </td>
                                             <td>
@@ -930,7 +924,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Issue</th>
+                                            <th>location</th>
                                             <th>Category</th>
                                             <th>Status</th>
                                             <th>Priority</th>
@@ -942,7 +936,7 @@
                                         {% for issue in recent_issues %}
                                         <tr>
                                             <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.title }}</td>
+                                            <td>{{ issue.location|truncatechars:10 }}</td>
                                             <td>
                                                 <span class="category-badge category-{{ issue.category }}">
                                                     {{ issue.get_category_display }}
@@ -993,7 +987,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Issue</th>
+                                            <th>location</th>
                                             <th>Category</th>
                                             <th>Status</th>
                                             <th>Priority</th>
@@ -1005,7 +999,7 @@
                                         {% for issue in recent_issues %}
                                         <tr>
                                             <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.title }}</td>
+                                            <td>{{ issue.location|truncatechars:10 }}</td>
                                             <td>
                                                 <span class="category-badge category-{{ issue.category }}">
                                                     {{ issue.get_category_display }}
@@ -1056,7 +1050,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Issue</th>
+                                            <th>location</th>
                                             <th>Category</th>
                                             <th>Status</th>
                                             <th>Priority</th>
@@ -1068,7 +1062,7 @@
                                         {% for issue in recent_issues %}
                                         <tr>
                                             <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.title }}</td>
+                                            <td>{{ issue.location|truncatechars:10 }}</td>
                                             <td>
                                                 <span class="category-badge category-{{ issue.category }}">
                                                     {{ issue.get_category_display }}
@@ -1108,10 +1102,6 @@
             <section id="users-section" class="section-content" style="display: none;">
                 <div class="header">
                     <h1>User Management</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" onclick="openUserModal('add')">Add User</button>
-                        <a href="user_management.html">add user</a>
-                    </div>
                 </div>
                 
                 <div class="card">
@@ -1183,113 +1173,6 @@
                 <p style="color: var(--color-text-secondary); margin-top: 20px;">System configuration, notification preferences, and admin settings.</p>
             </section>
         </main>
-    </div>
-
-    <!-- Modal for New Issue -->
-    <div class="modal" id="newIssueModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Report New Issue</h2>
-                <button class="modal-close" onclick="closeModal('newIssueModal')">×</button>
-            </div>
-            <!-- User Management Modal -->
-            <div class="modal" id="userModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 id="userModalTitle">Add New User</h2>
-                        <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
-                    </div>
-                    <form method="post" action="{% url 'user_management' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <input type="text" name="username" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">First Name</label>
-                            <input type="text" name="first_name" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" name="last_name" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Role</label>
-                            <select name="role" class="form-select">
-                                <option value="citizen">Citizen</option>
-                                <option value="officer">Officer</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Phone</label>
-                            <input type="text" name="phone" class="form-input">
-                        </div>
-                        <div class="flex gap-12 mt-20">
-                            <button type="submit" class="btn btn-primary" style="flex: 1;">Save User</button>
-                            <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-                <form method="POST" action="{% url 'dashboard_view' %}">
-                {% csrf_token %} <div class="form-group">
-                    <label class="form-label">Issue Title</label>
-                    <input type="text" name="title" class="form-input" required>
-                </div>
-            
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select name="category" class="form-select" required>
-                        <option value="">Select Category</option>
-                        <option value="pothole">Pothole</option>
-                        <option value="drainage">Drainage</option>
-                        <option value="streetlight">Streetlight</option>
-                        <option value="waste">Waste Management</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-            
-                <div class="form-group">
-                    <label class="form-label">Priority Level</label>
-                    <select name="priority" class="form-select" required>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-            
-                <div class="form-group">
-                    <label class="form-label">Location</label>
-                    <input type="text" name="location" class="form-input" required>
-                </div>
-            
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-textarea" required></textarea>
-                </div>
-            
-                <div class="form-group">
-                    <label class="form-label">Assign To</label>
-                    <select name="assigned_to" class="form-select">
-                        <option value="">Unassigned</option>
-                        {% for user in users %}
-                            <option value="{{ user.id }}">{{ user.username }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            
-                <div class="flex gap-12 mt-20">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Issue</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('newIssueModal')" style="flex: 1;">Cancel</button>
-                </div>
-             </form>
-        </div>
     </div>
 
     <script>

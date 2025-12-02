@@ -26,7 +26,7 @@ def admin_login(request):
 
             if user_obj and user_obj.is_superuser:
                 login(request, user_obj)
-                return redirect('/dashboard/')
+                return redirect('/user_admin/dashboard/')
 
             messages.info(request, 'Invalid password')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/admin-panel/'))
@@ -40,5 +40,14 @@ def admin_login(request):
 def dashboard(request):
     if not request.user.is_superuser:
         logout(request)
-        return redirect('/admin-panel')
+        return redirect('/admin-panel/')
     return render(request, 'home/admin_panel.html')
+
+@login_required(login_url='/user_admin/admin-panel/')
+def admin_logout(request):
+    logout(request)
+    messages.info(request, 'You have been logged out.')
+    return redirect('/user_admin/admin-panel/')
+
+def demo(request):
+    return render(request ,'home/index1.html')

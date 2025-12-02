@@ -213,6 +213,20 @@
   {% endfor %}
 </form>
 
+<h1>Dashboard</h1>
+
+<form action="{% url 'admin-logout' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">Logout</button>
+</form>
+
+
+{% if user.is_authenticated %}
+  <p>You are logged in as {{ user.username }}.</p>
+{% else %}
+  <p>You are not logged in.</p>
+{% endif %}
+
 <body>
   <aside class="sidebar">
     <h2>City Connect</h2>
