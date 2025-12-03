@@ -13,9 +13,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
 
-def dash(request):
-    return HttpResponse("homeeeeeeeeeeeeeeee!")
+
 # Create your views here.
 def dashboard(request):
     return render(request, 'home/index.html')
@@ -23,13 +24,13 @@ def dashboard(request):
 
 def dashboard_view(request):
     # 1. Handle Form Submission (New Issue) - KEEP AS IS
-    if request.method == 'POST':
-        form = IssueForm(request.POST)
-        if form.is_valid():
-            issue = form.save()
-            ActivityLog.objects.create(issue=issue, action=f"New Issue Reported: {issue.title}")
-            messages.success(request, 'Issue created successfully!')
-            return redirect('dashboard_view')
+    # if request.method == 'POST':
+    #     form = IssueForm(request.POST)
+    #     if form.is_valid():
+    #         issue = form.save()
+    #         ActivityLog.objects.create(issue=issue, action=f"New Issue Reported: {issue.title}")
+    #         messages.success(request, 'Issue created successfully!')
+    #         return redirect('dashboard_view')
 
     # 2. Calculate Stats - KEEP AS IS
     total_issues = Issue.objects.count()
@@ -71,65 +72,3 @@ def dashboard_view(request):
     }
 
     return render(request, 'home/index.html', context)
-
-def create_missing_profiles():
-    """Run this once to create profiles for existing users"""
-    for user in User.objects.all():
-        if not hasattr(user, 'userprofile'):
-            UserProfile.objects.create(user=user)
-            
-@login_required
-def user_management(request):
-    # Handle POST (Add User)
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        role = request.POST.get('role')
-        phone = request.POST.get('phone')
-        
-        # Create user
-        try:
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-                password='temp123'  # Set temp password
-            )
-            # Create profile
-            UserProfile.objects.create(
-                user=user,
-                role=role,
-                phone=phone
-            )
-            messages.success(request, f'User {username} created successfully!')
-            return redirect('user_management')
-        except Exception as e:
-            messages.error(request, f'Error creating user: {str(e)}')
-    
-    # Handle GET - Display users
-    users = User.objects.select_related('userprofile').all()
-    context = {'users': users}
-    return render(request, 'home/index.html', context)
-
-# home/views.py
-
-
-class UserManagementView(ListView):
-    model = User
-    template_name = 'home/user_management.html'
-    context_object_name = 'users'
-
-@require_http_methods(["GET", "POST"])
-def add_user_ajax(request):
-    """AJAX endpoint for add user modal"""
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'message': 'User created successfully'})
-    else:
-        form = UserCreationForm()
-    return JsonResponse({'success': False, 'form': form.as_p()})

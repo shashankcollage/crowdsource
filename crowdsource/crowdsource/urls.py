@@ -19,7 +19,6 @@ from django.urls import path , include
 from .import views
 urlpatterns = [
     path('admin/', admin.site.urls,name="admin-panel"),
-    path('home/',include('home.urls')),
-    path('user_admin/',include('user_admin.urls')),
-    path('',views.dashboard_lo,name="dashboard_lo"),
+    path('',include('home.urls')),
+    # path('',views.dashboard_lo,name="dashboard_lo"),
 ]

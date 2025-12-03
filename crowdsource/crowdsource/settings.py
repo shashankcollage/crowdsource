@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 ]
 EXTERNAL_APP = [
     'home',
-    'user_admin',
 ]
 
 INSTALLED_APPS += EXTERNAL_APP

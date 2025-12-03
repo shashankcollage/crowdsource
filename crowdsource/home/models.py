@@ -68,21 +68,9 @@ class UserProfile(models.Model):
 
 class UserManagementView(ListView):
     model = User
-    template_name = 'user_management.html'
+    template_name = 'home/index.html'
     context_object_name = 'users'
     
     @method_decorator(require_http_methods(["GET", "POST"]))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-@require_http_methods(["GET", "POST"])
-def add_user_ajax(request):
-    """AJAX endpoint for add user modal"""
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'message': 'User created successfully'})
-    else:
-        form = UserCreationForm()
-    return JsonResponse({'success': False, 'form': form.as_p()})
