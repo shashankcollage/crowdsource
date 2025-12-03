@@ -72,3 +72,13 @@ def dashboard_view(request):
     }
 
     return render(request, 'home/index.html', context)
+
+
+# views.py
+def your_view(request):
+    recent_issues = Issue.objects.all()[:5]  # Only first 5 issues
+    return render(request, 'home/index.html', {
+        'recent_issues': recent_issues,
+    })
+
+

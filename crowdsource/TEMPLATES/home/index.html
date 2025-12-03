@@ -676,23 +676,19 @@
         .flex {
             display: flex;
         }
+        .no-underline {
+    text-decoration: none;
+    }
+
     </style>
 </head>
 <body>
-    <!-- <div style="background: yellow; padding: 10px; color: black;">
-        <strong>Debug Info:</strong><br>
-        Number of issues found: {{ recent_issues|length }} <br>
-        First issue: {{ recent_issues.0 }} <br>
-        First issue ID: {{ recent_issues.0.pk }}
-    </div> -->
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                </svg>
-                CivicHub
+                <a href="/" class="no-underline">CivicHub</a>
+
             </div>
 
             <ul class="nav-menu">
@@ -823,79 +819,71 @@
                             <h2>Recent Issues</h2>
                             <button onclick="showAllIssues()" class="btn btn-secondary">View All</button>
                         </div>
-                        <div class="card-body">
-                            <div class="filter-group">
-                                <button class="filter-btn active" onclick="filterIssues('all')">All</button>
-                                <button class="filter-btn" onclick="filterIssues('reported')">Reported</button>
-                                <button class="filter-btn" onclick="filterIssues('verified')">Verified</button>
-                                <button class="filter-btn" onclick="filterIssues('in-progress')">In Progress</button>
-                                <button class="filter-btn" onclick="filterIssues('resolved')">Resolved</button>
-                            </div>
-                            <div class="table-container">
-                                <table id="recentIssuesTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>location</th>
-                                            <th>Category</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Assigned To</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for issue in recent_issues %}
-                                        <tr>
-                                            <td>#{{ issue.id }}</td>
-                                            <td><p>{{ issue.location|truncatechars:10}}</p> </td>
-                                            <td>
-                                                <span class="category-badge category-{{ issue.category }}">
-                                                    {{ issue.get_category_display}}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="status-badge status-{{ issue.status }}">
-                                                    <span>●</span> {{ issue.get_status_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="priority-{{ issue.priority }}">
-                                                    {{ issue.get_priority_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {% if issue.assigned_to %}
-                                                    {{ issue.assigned_to.username }}
-                                                {% else %}
-                                                    Unassigned
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                
-                                                <button class="action-btn action-btn-view" onclick="viewIssue('{{ issue.id }}')">View</button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                        <div class="table-container">
+                            <table id="recentIssuesTable">
+                                 <thead>
+                                     <tr>
+                                         <th>ID</th>
+                                         <th>location</th>
+                                         <th>Category</th>
+                                         <th>Status</th>
+                                         <th>Priority</th>
+                                         <th>Assigned To</th>
+                                         <th>Actions</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     {% for issue in recent_issues|slice:":6" %}
+                                     <tr>
+                                         <td>#{{ issue.id }}</td>
+                                         <td><p>{{ issue.location|truncatechars:10 }}</p></td>
+                                         <td>
+                                             <span class="category-badge category-{{ issue.category }}">
+                                                 {{ issue.get_category_display }}
+                                             </span>
+                                         </td>
+                                         <td>
+                                             <span class="status-badge status-{{ issue.status }}">
+                                                 <span>●</span> {{ issue.get_status_display }}
+                                             </span>
+                                         </td>
+                                         <td>
+                                             <span class="priority-{{ issue.priority }}">
+                                                 {{ issue.get_priority_display }}
+                                             </span>
+                                         </td>
+                                         <td>
+                                             {% if issue.assigned_to %}
+                                                 {{ issue.assigned_to.username }}
+                                             {% else %}
+                                                 Unassigned
+                                             {% endif %}
+                                         </td>
+                                         <td>
+                                             <button class="action-btn action-btn-view" onclick="viewIssue('{{ issue.id }}')">View</button>
+                                         </td>
+                                     </tr>
+                                     {% endfor %}
+                                 </tbody>
+                             </table>
+                         </div>
 
+                    </div>
+                    
+                    
                     <!-- Activity Feed -->
                     <div class="card right-sidebar">
                         <div class="card-header">
                             <h2>Recent Activity</h2>
                         </div>
-                                <div class="card-body">
-                                 {% for activity in recent_activities %}
-                                 <div class="activity-item">
-                                     <div class="activity-title">{{ activity.action }}</div>
-                                     <div class="activity-time">{{ activity.timestamp|timesince }} ago</div>
-                                 </div>
-                                 {% endfor %}
-                                </div>
+                        <div class="card-body">
+                         {% for activity in recent_activities %}
+                         <div class="activity-item">
+                             <div class="activity-title">{{ activity.action }}</div>
+                             <div class="activity-time">{{ activity.timestamp|timesince }} ago</div>
+                         </div>
+                         {% endfor %}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -904,15 +892,8 @@
             <section id="issues-section" class="section-content" style="display: none;">
                 <h1>All Issues</h1>
                 <p style="color: var(--color-text-secondary); margin-top: 20px;"><div class="card-body">
-                            <div class="filter-group">
-                                <button class="filter-btn active" onclick="filterIssues('all')">All</button>
-                                <button class="filter-btn" onclick="filterIssues('reported')">Reported</button>
-                                <button class="filter-btn" onclick="filterIssues('verified')">Verified</button>
-                                <button class="filter-btn" onclick="filterIssues('in-progress')">In Progress</button>
-                                <button class="filter-btn" onclick="filterIssues('resolved')">Resolved</button>
-                            </div>
                             <div class="table-container">
-                                <table id="recentIssuesTable">
+                                <table id="recentIssuesTable1">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -925,70 +906,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for issue in recent_issues %}
-                                        <tr>
-                                            <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.location|truncatechars:10 }}</td>
-                                            <td>
-                                                <span class="category-badge category-{{ issue.category }}">
-                                                    {{ issue.get_category_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="status-badge status-{{ issue.status }}">
-                                                    <span>●</span> {{ issue.get_status_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="priority-{{ issue.priority }}">
-                                                    {{ issue.get_priority_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {% if issue.assigned_to %}
-                                                    {{ issue.assigned_to.username }}
-                                                {% else %}
-                                                    Unassigned
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                
-                                                <button class="action-btn action-btn-view" onclick="viewIssue('{{ issue.id }}')">View</button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </p>
-            </section>
-
-            <section id="pending-section" class="section-content" style="display: none;">
-                <h1>Pending Issues</h1>
-                <p style="color: var(--color-text-secondary); margin-top: 20px;"><div class="card-body">
-                            <div class="filter-group">
-                                <button class="filter-btn active" onclick="filterIssues('all')">All</button>
-                                <button class="filter-btn" onclick="filterIssues('reported')">Reported</button>
-                                <button class="filter-btn" onclick="filterIssues('verified')">Verified</button>
-                                <button class="filter-btn" onclick="filterIssues('in-progress')">In Progress</button>
-                                <button class="filter-btn" onclick="filterIssues('resolved')">Resolved</button>
-                            </div>
-                            <div class="table-container">
-                                <table id="recentIssuesTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>location</th>
-                                            <th>Category</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Assigned To</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for issue in recent_issues %}
+                                        {% for issue in recent_issues|slice:":10" %}
                                         <tr>
                                             <td>#{{ issue.id }}</td>
                                             <td>{{ issue.location|truncatechars:10 }}</td>
@@ -1030,62 +948,7 @@
             <section id="resolved-section" class="section-content" style="display: none;">
                 <h1>Resolved Issues</h1>
                 <p style="color: var(--color-text-secondary); margin-top: 20px;"><div class="card-body">
-                            <div class="filter-group">
-                                <button class="filter-btn active" onclick="filterIssues('all')">All</button>
-                                <button class="filter-btn" onclick="filterIssues('reported')">Reported</button>
-                                <button class="filter-btn" onclick="filterIssues('verified')">Verified</button>
-                                <button class="filter-btn" onclick="filterIssues('in-progress')">In Progress</button>
-                                <button class="filter-btn" onclick="filterIssues('resolved')">Resolved</button>
-                            </div>
-                            <div class="table-container">
-                                <table id="recentIssuesTable">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>location</th>
-                                            <th>Category</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Assigned To</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for issue in recent_issues %}
-                                        <tr>
-                                            <td>#{{ issue.id }}</td>
-                                            <td>{{ issue.location|truncatechars:10 }}</td>
-                                            <td>
-                                                <span class="category-badge category-{{ issue.category }}">
-                                                    {{ issue.get_category_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="status-badge status-{{ issue.status }}">
-                                                    <span>●</span> {{ issue.get_status_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="priority-{{ issue.priority }}">
-                                                    {{ issue.get_priority_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {% if issue.assigned_to %}
-                                                    {{ issue.assigned_to.username }}
-                                                {% else %}
-                                                    Unassigned
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                
-                                                <button class="action-btn action-btn-view" onclick="viewIssue('{{ issue.id }}')">View</button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <h3>none at this point </h3>
                         </div>
                     </p>
             </section>

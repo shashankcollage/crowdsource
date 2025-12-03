@@ -74,3 +74,12 @@ class UserManagementView(ListView):
     @method_decorator(require_http_methods(["GET", "POST"]))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class RecentIssuesView(ListView):
+    model = Issue
+    template_name = 'home/index.html'
+    context_object_name = 'recent_issues'
+
+    def get_queryset(self):
+        return super().get_queryset()[:5]
